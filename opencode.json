@@ -1,0 +1,18 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "docs/SAFETY.md",
+    "docs/REPRODUCIBILITY.md",
+    "docs/OPENCODE_CLI.md"
+  ],
+  "watcher": {
+    "ignore": [
+      ".venv/**",
+      ".opencode/artifacts/**",
+      "build/**",
+      "dist/**",
+      "**/__pycache__/**",
+      ".pytest_cache/**"
+    ]
+  }
+}
