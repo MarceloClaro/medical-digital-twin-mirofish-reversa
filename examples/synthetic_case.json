@@ -1,0 +1,24 @@
+{
+  "case_id": "respiratory-training-001",
+  "request": "Caso inteiramente fictício com febre e tosse há dois dias.",
+  "synthetic": true,
+  "profile": {
+    "age_group": "adulto",
+    "sex_at_birth": "F"
+  },
+  "clinical_data": {
+    "history": ["asma simulada"],
+    "vital_signs": {"temperature_c": 38.1, "heart_rate_bpm": 92},
+    "lab_results": [{"name": "CRP", "value": 8.0, "unit": "mg/L"}]
+  },
+  "hypotheses": [
+    {"name": "infecção respiratória simulada", "status": "possible"}
+  ],
+  "scenario_actions": [
+    "observação sintética",
+    "coleta simulada de dados"
+  ],
+  "provenance": [
+    {"type": "synthetic_fixture", "id": "fixture-respiratory-001"}
+  ]
+}

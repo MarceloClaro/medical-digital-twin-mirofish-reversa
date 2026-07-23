@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/digital_twin_result.schema.json",
+  "title": "DigitalTwinResult",
+  "type": "object",
+  "required": ["twin_id", "run_id", "simulation_only", "source_hash", "trajectories", "swarm", "reversa_review", "safety"],
+  "properties": {
+    "twin_id": {"type": "string", "pattern": "^mdt-"},
+    "run_id": {"type": "string"},
+    "simulation_only": {"const": true},
+    "source_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "trajectories": {"type": "array", "minItems": 2, "maxItems": 12},
+    "swarm": {"type": "object"},
+    "reversa_review": {"type": "object"},
+    "safety": {
+      "type": "object",
+      "required": ["clinical_use_allowed", "prescription_allowed", "human_review_required"],
+      "properties": {
+        "clinical_use_allowed": {"const": false},
+        "prescription_allowed": {"const": false},
+        "human_review_required": {"const": true}
+      }
+    }
+  }
+}

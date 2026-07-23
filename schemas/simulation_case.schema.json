@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/simulation_case.schema.json",
+  "title": "SimulationCase",
+  "type": "object",
+  "required": ["case_id", "request", "synthetic"],
+  "properties": {
+    "case_id": {"type": "string", "minLength": 1},
+    "request": {"type": "string", "minLength": 1},
+    "synthetic": {"const": true},
+    "profile": {"type": "object"},
+    "clinical_data": {"type": "object"},
+    "hypotheses": {"type": "array", "items": {"type": "object"}},
+    "scenario_actions": {"type": "array", "items": {"type": "string"}},
+    "provenance": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": false
+}
