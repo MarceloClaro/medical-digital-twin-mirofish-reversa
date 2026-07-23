@@ -25,7 +25,7 @@ Alpha experimental. O modo padrão é hermético, local e reproduzível.
 
 ```bash
 git clone https://github.com/MarceloClaro/medical-digital-twin-mirofish-reversa.git
-cd opencode_medical-digital-twin-mirofish-reversa
+cd medical-digital-twin-mirofish-reversa
 python -m venv .venv
 . .venv/bin/activate
 python -m pip install -e '.[dev]'
@@ -37,6 +37,23 @@ pytest
 ```bash
 medical-twin examples/synthetic_case.json --seed 42 --horizon 4 --output result.json
 ```
+
+## OpenCode CLI
+
+O repositório inclui custom tools, agente restrito, comandos e skill para execução direta:
+
+```bash
+opencode .
+```
+
+No TUI:
+
+```text
+/medical-twin examples/synthetic_case.json 4 42
+/medical-twin-validate examples/synthetic_case.json
+```
+
+A integração não exige instalação editável do pacote: o runner adiciona `src/` de forma controlada. Os artefatos são gravados em `.opencode/artifacts/medical-twin/`. Consulte `docs/OPENCODE_CLI.md`.
 
 ## Integração MiroFish
 
@@ -56,6 +73,7 @@ src/.../engine.py            motor do gêmeo
 src/.../models.py            contratos imutáveis
 src/.../adapters/            enxame hermético e bridge externo
 src/.../reversa.py           auditor adversarial
+.opencode/                   comandos, agente, skill e ferramentas OpenCode
 tests/                       testes herméticos
 schemas/                     contratos JSON
 docs/                        arquitetura, segurança e SPEC
