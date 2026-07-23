@@ -9,6 +9,21 @@
   "default_swarm": "deterministic-local-swarm",
   "optional_integration": "666ghj/MiroFish via external JSON adapter",
   "reviewer": "reversa-medical-adversarial/1.0",
-  "tests_passed": 9,
-  "coverage_percent": 84
+  "tests_passed": 16,
+  "coverage_percent": null,
+  "opencode_cli": {
+    "status": "integrated",
+    "custom_tools": [
+      "medical_twin_validate",
+      "medical_twin_simulate",
+      "medical_twin_mirofish"
+    ],
+    "agent": "medical-twin",
+    "commands": [
+      "medical-twin",
+      "medical-twin-validate",
+      "medical-twin-mirofish"
+    ],
+    "external_mirofish_requires_approval": true
+  }
 }
