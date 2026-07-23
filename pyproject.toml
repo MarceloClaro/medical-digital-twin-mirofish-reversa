@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opencode-medical-digital-twin-mirofish-reversa"
-version = "0.1.0"
-description = "Gêmeos digitais médicos exclusivamente simulados, com enxame MiroFish opcional e revisão adversarial Reversa."
+version = "0.2.0"
+description = "Gêmeos digitais e conselho multimodal de especialistas para casos médicos sintéticos, com MiroFish, Gemma/LiteRT-LM e Reversa."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
 authors = [{name = "Marcelo Claro"}]
-keywords = ["digital-twin", "medical-simulation", "mirofish", "reversa", "clinical-safety"]
+keywords = ["digital-twin", "medical-simulation", "mirofish", "gemma", "litert-lm", "reversa", "clinical-safety"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",

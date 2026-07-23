@@ -1,4 +1,4 @@
-"""Bridge seguro entre OpenCode e o motor de simulação sintética."""
+"""Bridge seguro entre OpenCode e os motores de simulação sintética."""
 from __future__ import annotations
 
 import json
@@ -7,7 +7,9 @@ from pathlib import Path
 from typing import Any
 
 from .adapters import MiroFishExternalAdapter, SwarmAdapter
+from .council import MedicalSpecialistCouncil
 from .engine import MedicalDigitalTwinEngine
+from .model_fabric import LiteRTLMExternalAdapter, MultimodalModelAdapter
 from .models import SimulationCase
 
 
@@ -18,8 +20,8 @@ class OpenCodeBridgeError(RuntimeError):
 def execute_opencode_request(payload: dict[str, Any], *, worktree: Path) -> dict[str, Any]:
     root = worktree.resolve()
     operation = str(payload.get("operation", "simulate")).strip().lower()
-    if operation not in {"validate", "simulate"}:
-        raise OpenCodeBridgeError("operation deve ser 'validate' ou 'simulate'")
+    if operation not in {"validate", "simulate", "council"}:
+        raise OpenCodeBridgeError("operation deve ser 'validate', 'simulate' ou 'council'")
 
     case_path = _resolve_inside(root, str(payload.get("case_file", "")), field="case_file")
     if not case_path.is_file():
@@ -46,17 +48,13 @@ def execute_opencode_request(payload: dict[str, Any], *, worktree: Path) -> dict
             "synthetic": case.synthetic,
             "case_file": str(case_path.relative_to(root)),
         }
-
+    if operation == "council":
+        return _council(payload, root=root, case=case)
     return _simulate(payload, root=root, case=case)
 
 
 def _simulate(payload: dict[str, Any], *, root: Path, case: SimulationCase) -> dict[str, Any]:
-    try:
-        seed = int(payload.get("seed", 42))
-        horizon = int(payload.get("horizon", 4))
-    except (TypeError, ValueError) as exc:
-        raise OpenCodeBridgeError("seed e horizon devem ser inteiros") from exc
-
+    seed, horizon = _seed_and_horizon(payload)
     adapter_name = str(payload.get("adapter", "deterministic")).strip().lower()
     adapter: SwarmAdapter | None
     if adapter_name == "deterministic":
@@ -83,9 +81,7 @@ def _simulate(payload: dict[str, Any], *, root: Path, case: SimulationCase) -> d
         if output_value
         else root / ".opencode" / "artifacts" / "medical-twin" / f"{result.twin_id}.json"
     )
-    artifact.parent.mkdir(parents=True, exist_ok=True)
-    artifact.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
+    _write_artifact(artifact, data)
     states = data.get("trajectories", [])
     return {
         "ok": True,
@@ -100,6 +96,91 @@ def _simulate(payload: dict[str, Any], *, root: Path, case: SimulationCase) -> d
         "reversa_findings": result.reversa_review.get("findings", []),
         "safety": result.safety,
     }
+
+
+def _council(payload: dict[str, Any], *, root: Path, case: SimulationCase) -> dict[str, Any]:
+    seed, horizon = _seed_and_horizon(payload)
+    adapter_name = str(payload.get("adapter", "deterministic")).strip().lower()
+    adapter: MultimodalModelAdapter | None
+    if adapter_name == "deterministic":
+        adapter = None
+    elif adapter_name == "litert_lm":
+        command = os.environ.get("LITERT_LM_COMMAND", "").strip()
+        if not command:
+            raise OpenCodeBridgeError("LITERT_LM_COMMAND não está configurado pelo operador")
+        adapter = LiteRTLMExternalAdapter(command)
+    else:
+        raise OpenCodeBridgeError("adapter do conselho deve ser 'deterministic' ou 'litert_lm'")
+
+    image_values = payload.get("image_files", [])
+    if image_values is None:
+        image_values = []
+    if not isinstance(image_values, list):
+        raise OpenCodeBridgeError("image_files deve ser uma lista")
+    images = [
+        _resolve_inside(root, str(value), field="image_files") for value in image_values
+    ]
+
+    specialist_values = payload.get("specialists")
+    if specialist_values is not None and not isinstance(specialist_values, list):
+        raise OpenCodeBridgeError("specialists deve ser uma lista")
+    specialists = (
+        [str(value).strip() for value in specialist_values if str(value).strip()]
+        if specialist_values is not None
+        else None
+    )
+
+    try:
+        result = MedicalSpecialistCouncil(adapter=adapter, seed=seed).run(
+            case,
+            image_files=images,
+            selected_specialists=specialists,
+            horizon_steps=horizon,
+        )
+    except (ValueError, RuntimeError) as exc:
+        raise OpenCodeBridgeError(str(exc)) from exc
+
+    data = result.to_dict()
+    output_value = payload.get("output_file")
+    artifact = (
+        _resolve_inside(root, str(output_value), field="output_file")
+        if output_value
+        else root
+        / ".opencode"
+        / "artifacts"
+        / "medical-council"
+        / f"{result.council_id}.json"
+    )
+    _write_artifact(artifact, data)
+    return {
+        "ok": True,
+        "operation": "council",
+        "adapter": adapter_name,
+        "case_id": case.case_id,
+        "council_id": result.council_id,
+        "twin_id": result.digital_twin.get("twin_id"),
+        "artifact_path": str(artifact.relative_to(root)),
+        "specialist_count": len(result.opinions),
+        "specialists": [opinion.specialist_id for opinion in result.opinions],
+        "contested_claim_count": len(result.synthesis.get("contested_claims", [])),
+        "safety_decision": result.safety_review.get("decision"),
+        "safety_findings": result.safety_review.get("findings", []),
+        "safety": result.safety,
+    }
+
+
+def _seed_and_horizon(payload: dict[str, Any]) -> tuple[int, int]:
+    try:
+        seed = int(payload.get("seed", 42))
+        horizon = int(payload.get("horizon", 4))
+    except (TypeError, ValueError) as exc:
+        raise OpenCodeBridgeError("seed e horizon devem ser inteiros") from exc
+    return seed, horizon
+
+
+def _write_artifact(path: Path, data: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def _resolve_inside(root: Path, raw_path: str, *, field: str) -> Path:

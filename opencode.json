@@ -3,7 +3,9 @@
   "instructions": [
     "docs/SAFETY.md",
     "docs/REPRODUCIBILITY.md",
-    "docs/OPENCODE_CLI.md"
+    "docs/OPENCODE_CLI.md",
+    "docs/LITERT_LM_GEMMA4.md",
+    "docs/SPEC-002-MULTIMODAL-SPECIALIST-COUNCIL.md"
   ],
   "watcher": {
     "ignore": [

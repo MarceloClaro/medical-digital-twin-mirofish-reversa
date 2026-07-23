@@ -1,11 +1,17 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — 2026-07-23
 
-- integração executável com OpenCode CLI;
-- custom tools `medical_twin_validate`, `medical_twin_simulate` e `medical_twin_mirofish`;
-- agente de mínimo privilégio, comandos TUI e skill;
-- bridge com confinamento de caminhos e MiroFish configurado somente pelo operador.
+- conselho multimodal de especialistas para casos sintéticos;
+- perfis de clínica, radiologia, farmacologia, procedimentos, nutrição, exercício e metodologia;
+- rodada independente e validação cruzada por claims;
+- pesos `nash-product-inspired` com dissenso preservado;
+- integração do conselho ao Medical Digital Twin;
+- adapter hermético sem interpretação de pixels;
+- adapter externo Gemma 4 / LiteRT-LM por JSON stdin/stdout;
+- bridge para servidor local OpenAI-compatible do LiteRT-LM;
+- comandos OpenCode `/medical-twin-council` e `/medical-twin-gemma`;
+- SPEC-002, schema, exemplos e testes TDD.
 
 ## 0.1.0 — 2026-07-23
 

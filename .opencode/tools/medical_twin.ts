@@ -33,6 +33,18 @@ const commonArgs = {
   output_file: tool.schema.string().optional().describe("Caminho relativo opcional da saída"),
 }
 
+const councilArgs = {
+  ...commonArgs,
+  image_files: tool.schema
+    .array(tool.schema.string())
+    .optional()
+    .describe("Imagens sintéticas PNG/JPEG/WEBP dentro do projeto"),
+  specialists: tool.schema
+    .array(tool.schema.string())
+    .optional()
+    .describe("IDs de especialistas; omita para usar o conselho completo"),
+}
+
 export const validate = tool({
   description: "Valida um caso médico sintético sem executar simulação.",
   args: { case_file: commonArgs.case_file },
@@ -54,5 +66,21 @@ export const mirofish = tool({
   args: commonArgs,
   async execute(args, context) {
     return runBridge({ operation: "simulate", adapter: "mirofish", ...args }, context)
+  },
+})
+
+export const council = tool({
+  description: "Executa conselho hermético de especialistas e vincula a síntese ao gêmeo digital.",
+  args: councilArgs,
+  async execute(args, context) {
+    return runBridge({ operation: "council", adapter: "deterministic", ...args }, context)
+  },
+})
+
+export const gemma = tool({
+  description: "Executa conselho multimodal pelo Gemma/LiteRT-LM configurado pelo operador.",
+  args: councilArgs,
+  async execute(args, context) {
+    return runBridge({ operation: "council", adapter: "litert_lm", ...args }, context)
   },
 })

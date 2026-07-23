@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opencode.local/schemas/specialist_council_result.schema.json",
+  "title": "MedicalSpecialistCouncilResult",
+  "type": "object",
+  "required": ["council_id", "contract_version", "case_id", "model_adapter", "opinions", "cross_validation", "game_theory", "synthesis", "digital_twin", "safety", "reproducibility"],
+  "properties": {
+    "council_id": {"type": "string", "pattern": "^msc-[a-f0-9]{16}$"},
+    "contract_version": {"const": "medical-specialist-council/1.0"},
+    "case_id": {"type": "string", "minLength": 1},
+    "model_adapter": {"type": "string", "minLength": 1},
+    "opinions": {"type": "array", "minItems": 1},
+    "cross_validation": {"type": "object"},
+    "game_theory": {"type": "object", "required": ["method", "weights"]},
+    "synthesis": {"type": "object"},
+    "digital_twin": {"type": "object"},
+    "safety": {
+      "type": "object",
+      "required": ["simulation_only", "clinical_use_allowed", "diagnostic_claim_allowed", "prescription_allowed", "human_review_required"],
+      "properties": {
+        "simulation_only": {"const": true},
+        "clinical_use_allowed": {"const": false},
+        "diagnostic_claim_allowed": {"const": false},
+        "prescription_allowed": {"const": false},
+        "human_review_required": {"const": true}
+      }
+    },
+    "reproducibility": {"type": "object"}
+  }
+}
