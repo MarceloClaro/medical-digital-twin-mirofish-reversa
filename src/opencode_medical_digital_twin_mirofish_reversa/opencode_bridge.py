@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-from .adapters import MiroFishExternalAdapter
+from .adapters import MiroFishExternalAdapter, SwarmAdapter
 from .engine import MedicalDigitalTwinEngine
 from .models import SimulationCase
 
@@ -58,6 +58,7 @@ def _simulate(payload: dict[str, Any], *, root: Path, case: SimulationCase) -> d
         raise OpenCodeBridgeError("seed e horizon devem ser inteiros") from exc
 
     adapter_name = str(payload.get("adapter", "deterministic")).strip().lower()
+    adapter: SwarmAdapter | None
     if adapter_name == "deterministic":
         adapter = None
     elif adapter_name == "mirofish":
