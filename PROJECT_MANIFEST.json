@@ -1,14 +1,22 @@
 {
   "project": "opencode_medical-digital-twin-mirofish-reversa",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "alpha-experimental",
   "python": ">=3.11",
   "runtime_dependencies": 0,
   "clinical_use_allowed": false,
   "real_patient_data_allowed": false,
   "default_swarm": "deterministic-local-swarm",
-  "optional_integration": "666ghj/MiroFish via external JSON adapter",
-  "reviewer": "reversa-medical-adversarial/1.0",
-  "tests_passed": 9,
-  "coverage_percent": 84
+  "default_multimodal_adapter": "deterministic-multimodal-scaffold",
+  "optional_integrations": [
+    "666ghj/MiroFish via external JSON adapter",
+    "Gemma 4 via LiteRT-LM external JSON adapter/OpenAI-compatible local server"
+  ],
+  "council_contract": "medical-specialist-council/1.0",
+  "game_theory_method": "nash-product-inspired",
+  "reviewers": [
+    "reversa-medical-adversarial/1.0",
+    "reversa-council-adversarial/1.0"
+  ],
+  "quality_method": "SDD + TDD + contract tests + fail-closed security gates"
 }

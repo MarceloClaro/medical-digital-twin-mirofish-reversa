@@ -1,0 +1,14 @@
+{
+  "case_id": "synthetic-council-001",
+  "request": "Caso educacional fictício para conselho de especialistas",
+  "synthetic": true,
+  "profile": {"age_group": "adulto", "sex_at_birth": "F"},
+  "clinical_data": {
+    "history": ["histórico inteiramente simulado"],
+    "vital_signs": {"temperature_c": 37.8},
+    "lab_results": []
+  },
+  "hypotheses": [],
+  "scenario_actions": ["observação sintética", "coleta simulada de dados"],
+  "provenance": [{"type": "synthetic_fixture", "version": "1.0"}]
+}
